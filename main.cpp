@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Shader.h>
 #include <iostream>
+#include <conio.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -200,12 +201,23 @@ int main()
     ourShader.setInt("texture2", 1);
     // render loop
     // -----------
+    float teste = 15.0f;
     while (!glfwWindowShouldClose(window))
     {
         // input
         // -----
         processInput(window);
-
+        int posi;
+        posi = kbhit();
+        if(posi != 0){
+           int tecla = getch();
+           if(tecla == 113){
+            teste++;
+           }
+           if(tecla == 101){
+            teste--;
+           }
+        }
         // render
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -220,17 +232,31 @@ int main()
 
         // create transformations
         glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        glm::mat4 view          = glm::mat4(1.0f);
+        //glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
 
         // Gira o modelo ao redor do eixo y ROTAÇÂO -1 no y pra Equerda
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.1f, 0.0f));
 
+
         // afasta o objetoo do observador e o coloca um pouco abaixo dele,
         // para um ponto de vista mais elevado do objeto
-        view  = glm::translate(view, glm::vec3(0.0f, -5.0f, -35.0f));
+        //view  = glm::translate(view, glm::vec3(0.0f, -12.0f, -45.0f));
+        glm::mat4 view;
+        view = glm::lookAt( glm::vec3(0.0f, teste, 35.0f),
+                            glm::vec3(0.0f, 0.0f, 0.0f),
+                            glm::vec3(0.0f, 56.0f, 0.0f) );
 
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+        //glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+//        glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+//        glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget));
+//        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+//        glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+//        glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+
         // retrieve the matrix uniform locations
         unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
